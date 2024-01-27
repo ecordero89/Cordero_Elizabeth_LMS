@@ -1,0 +1,32 @@
+
+/* Elizabeth Cordero
+ * Software Development I CEN 3024C CRN 24667
+ * Objective: Creating a software development plan for a Library Management System using SDLC following the requirments:
+ * Each line represents a book, and the id, title and author seperated  by commas.
+ * 1/18/2024
+ * Professor Walauskis
+ */
+
+
+
+/* The LibraryManagementSystem class serves as the entry for the application
+    *It demos the functions of the Library class. Performs actions like adding,
+    *removing and listing books.
+     */
+public class LibraryManagementSystem {
+    public static void main(String[] args) {
+        //Instantiate the Library class and load books from a file
+        Library library = new Library();
+        library.loadBooksFromFile("books.txt");
+
+        //Example: Add, remove and list books.
+        library.addBook(4, "To Kill a Mockingbird", "Harper Lee");
+        library.addBook(123, "1984", "George Orwell");
+        library.addBook(321, "Harry Potter", "J.K. Rowling");
+        library.removeBook(4);
+        library.listAllBooks();
+
+        //Save changes
+        library.saveBooksToFile("books.txt");
+    }
+}

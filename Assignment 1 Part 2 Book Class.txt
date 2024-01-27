@@ -1,0 +1,56 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+/* Elizabeth Cordero
+ * Software Development I CEN 3024C CRN 24667
+ * Objective: Creating a software development plan for a Library Management System using SDLC following the requirments:
+ * Each line represents a book, and the id, title and author seperated  by commas.
+ * 1/18/2024
+ * Professor Walauskis
+ */
+
+//Class representing a Book
+class Book {
+    private int id;
+    private String title;
+    private String author;
+/*Book class that initializes book properties
+ *The unique id
+ * The author of the book
+ * The Title of the book
+ */
+    public Book(int id, String title, String author) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+    }
+
+    /*Getter method to retrieve the book properties
+    *
+    * Returns the id of the book
+     */
+    public int getId() {
+        return id;
+    }
+    /*Gets the title of the book.
+    *return gets the title of the book
+     */
+        public String getTitle() {
+            return title;
+        }
+        /*Gets the author of the book
+        *
+        *Uses return to get the author
+         */
+            public String getAuthor() {
+                return author;
+            }
+//Override toString method
+            @Override
+    public String toString() {
+                return id + "," + title + "," + author;
+            }
+    }
+    
