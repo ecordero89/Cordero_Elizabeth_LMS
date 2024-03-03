@@ -5,11 +5,12 @@ import java.util.Scanner;
 
 /* Elizabeth Cordero
  * Software Development I CEN 3024C CRN 24667
- * Objective: Creating a software development plan for a Library Management System using SDLC following the requirments:
- * Each line represents a book, and the id, title and author seperated  by commas.
- * 03/03/2024
+ * Objective: Creating a software development plan for a Library Management System using SDLC following the requirements: Adding a book by barcode, removing a book by barcode,
+ * checking book out by title, checking book in by title, printing database to screen.
+ *  03/03/2024
  * Professor Walauskis
  */
+
 
 //Class representing a Book
 class Book {
@@ -54,10 +55,11 @@ class Book {
                 return id + "," + title + "," + author;
             }
     }
-    /*The Library class manages a collection of books, allowing the option to
-    add or remove books from the listing.
-    *
-    *It also provides the methods for loading a book from a file and saving it.
+    /* Elizabeth Cordero
+     * Software Development I CEN 3024C CRN 24667
+     * 03/03/2024The Library class manages a collection of books, allowing the option to
+     * add or remove books from the listing.
+     * It also provides the methods for loading a book from a file and saving it.
      */
     class Library {
         private List<Book> books;
