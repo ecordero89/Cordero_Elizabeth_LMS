@@ -1,4 +1,5 @@
 import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -16,6 +17,8 @@ class Book {
     private String title;
     private String author;
     private boolean checkedOut;
+    private LocalDate dueDate;
+
 
     //Constructor to initialize a Book object with id, title, and author
     public Book(int id, String title, String author) {
@@ -23,8 +26,11 @@ class Book {
         this.title = title;
         this.author = author;
         this.checkedOut = false;
+        this.dueDate = null;
     }
-
+public LocalDate getDueDate() {
+        return dueDate;
+}
     //Getter method to retrieve the book properties
     public int getId() {
         return id;
@@ -41,17 +47,22 @@ class Book {
     }
 
     public void checkOut(){
+
         checkedOut = true;
+        dueDate =LocalDate.now().plusDays(30); //Selected random due date
     }
 
     public void checkIn() {
+
         checkedOut = false;
+        dueDate = null;
     }
     //Override toString method, this shows the Book object as a string.
     @Override
     public String toString() {
         return id + "," + title + "," + author+ "," + (checkedOut ? "Checked Out" : "Available");
     }
+
 }
 
 /*
@@ -64,6 +75,9 @@ Software Development I
 //Library class to manage a book collection.
 class Library {
     private List<Book> books;
+    public List<Book> getBooks(){
+        return books;
+    }
 
     // Constructor to initialize the book list.
     public Library() {
