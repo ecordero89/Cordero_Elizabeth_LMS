@@ -1,0 +1,189 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Scanner;
+import javax.swing.SwingUtilities;
+
+/*
+Elizabeth Cordero
+Software Development I
+202420-CEN3024C-CRN24667
+03/24/2024
+*/
+
+//GUI class for the LMS
+public class LibraryManagementSystemGUI extends JFrame {
+    private Scanner scanner;
+    private Library libraryObj;
+    private JButton addBookButton;
+    private JButton removeBookByTitleButton;
+    private JButton listAllBooksButton;
+    private JButton removeBookByBarcodeButton;
+    private JButton checkInBookButton;
+    private JButton checkOutBookButton;
+    private JButton exitButton;
+    private JLabel fileNameLabel;
+    private JPanel bannerLabel;
+    private JTextField fileNameTextField;
+
+
+    /*
+Elizabeth Cordero
+Software Development I
+202420-CEN3024C-CRN24667
+03/24/2024
+*/
+    public LibraryManagementSystemGUI(Library library, Scanner scanner){
+        this.libraryObj = library;
+        this.scanner = scanner;
+
+        setTitle("Library Management System");
+        setLayout(null);
+        getContentPane().setBackground(Color.MAGENTA); // Set background color
+
+        //Initialize and add buttons, labels and textfields
+        addBookButton = new JButton("Add Book");
+        addBookButton.setBounds(20, 100, 150, 25);
+        add(addBookButton);
+
+        removeBookByTitleButton = new JButton("Remove Book by Title");
+        removeBookByTitleButton.setBounds(20, 130, 200, 25);
+        add(removeBookByTitleButton);
+
+
+        listAllBooksButton = new JButton("List All Books");
+        listAllBooksButton.setBounds(20, 160, 200, 25);
+        add(listAllBooksButton);
+
+        removeBookByBarcodeButton = new JButton("Remove Book by Barcode");
+        removeBookByBarcodeButton.setBounds(20, 190, 200, 25);
+        add(removeBookByBarcodeButton);
+
+        checkInBookButton = new JButton("Check In Book");
+        checkInBookButton.setBounds(20, 220, 150, 25);
+        add(checkInBookButton);
+
+        checkOutBookButton = new JButton("Check Out Book");
+        checkOutBookButton.setBounds(20, 250, 150, 25);
+        add(checkOutBookButton);
+
+        exitButton = new JButton("Exit");
+        exitButton.setBounds(20, 300, 110, 35);
+        add(exitButton);
+
+        fileNameLabel = new JLabel("Enter file name:");
+        fileNameLabel.setBounds(20, 30, 150, 50);
+        add(fileNameLabel);
+
+        fileNameTextField = new JTextField();
+        fileNameTextField.setBounds(150, 40, 200, 25);
+        add(fileNameTextField);
+
+        // Action Listeners
+        addBookButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String fileName = fileNameTextField.getText();
+                if (!fileName.isEmpty()) {
+                    libraryObj.loadBooksFromFile(fileName);
+                    JOptionPane.showMessageDialog(null, "Books added from file.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please enter a file name.");
+                }
+            }
+        });
+
+        removeBookByTitleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = JOptionPane.showInputDialog("Enter title to remove: ");
+                libraryObj.removeBookByTitle(title);
+                JOptionPane.showMessageDialog(null, "Book removed by title.");
+
+            }
+        });
+        fileNameTextField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String searchTitle = fileNameTextField.getText();
+                boolean found = false;
+                for (Book book : libraryObj.getAllBooks()) {
+                    if (book.getTitle().equalsIgnoreCase(searchTitle)) {
+                        JOptionPane.showMessageDialog(null, "Book found in the library:\n" + book.toString());
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    JOptionPane.showMessageDialog(null, "Book not found in the library.");
+                }
+            }
+        });
+
+
+        listAllBooksButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String allBooks = libraryObj.listAllBooks();
+                JOptionPane.showMessageDialog(null, allBooks, "All Books", JOptionPane.INFORMATION_MESSAGE);
+
+            }
+        });
+        removeBookByBarcodeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int barcode = Integer.parseInt(JOptionPane.showInputDialog("Enter Barcode to Remove:"));
+                boolean removed = libraryObj.removeBookByBarcode(barcode);
+                if (removed) {
+                    JOptionPane.showMessageDialog(null, "Book Removed By Barcode.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid Barcode Entered.");
+                }
+            }
+        });
+
+        checkOutBookButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = JOptionPane.showInputDialog("Enter Title to check out:");
+                libraryObj.checkOutBookByTitle(title);
+                JOptionPane.showMessageDialog(null, "Book checked out.");
+            }
+        });
+
+        checkInBookButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = JOptionPane.showInputDialog("Enter title to check in:");
+                if (title != null && !title.isEmpty()) {
+                    libraryObj.checkInBookByTitle(title);
+                    JOptionPane.showMessageDialog(null, "Book checked in.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid title entered.");
+                }
+            }
+        });
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        //Width and Height of the window
+        setSize(500, 400);
+
+        //Other Listeners
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+
+    //Main method
+    public static void main(String[] args) {
+        Library library = new Library();
+        Scanner scanner = new Scanner(System.in);
+        LibraryManagementSystemGUI gui = new
+                LibraryManagementSystemGUI(library, scanner);
+    }
+}
