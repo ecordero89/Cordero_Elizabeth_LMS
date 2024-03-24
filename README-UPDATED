@@ -1,4 +1,6 @@
-Library Management System (LMS)
+Library Management System (LMS) and GUI
 This project implements a simple Library Management System in Java. It allows users to manage a collection 
-of books by adding, removing, listing checking out, and checking in books by barcode. Does not include (GUI).
-Contains 3 classes. Books, Library and Library Management System Application.
+of books by adding, removing, listing all books, checking out, and checking in books, removing book by barcode and Exit button to 
+exit page.
+
+The GUI provides an intuitive interface for users to interact with the system.
