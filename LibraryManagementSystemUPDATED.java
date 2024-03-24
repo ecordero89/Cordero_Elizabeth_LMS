@@ -3,12 +3,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Iterator;
+import javax.swing.SwingUtilities;
+import javax.swing.JOptionPane;
 
 /*
 Elizabeth Cordero
 Software Development I
 202420-CEN3024C-CRN24667
-03/03/2024
+03/24/2024
 */
 
 //This class represents a Book with id, title, author and checkout status
@@ -28,10 +31,10 @@ class Book {
         this.checkedOut = false;
         this.dueDate = null;
     }
-public LocalDate getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
-}
-    //Getter method to retrieve the book properties
+    }
+    //Getter methods to get the book properties
     public int getId() {
         return id;
     }
@@ -46,14 +49,14 @@ public LocalDate getDueDate() {
         return checkedOut;
     }
 
+    //Method to check out
     public void checkOut(){
-
         checkedOut = true;
         dueDate =LocalDate.now().plusDays(30); //Selected random due date
     }
 
+    //Method to check in
     public void checkIn() {
-
         checkedOut = false;
         dueDate = null;
     }
@@ -69,19 +72,26 @@ public LocalDate getDueDate() {
 Elizabeth Cordero
 Software Development I
 202420-CEN3024C-CRN24667
-03/03/2024
+03/24/2024
 */
 
 //Library class to manage a book collection.
 class Library {
     private List<Book> books;
-    public List<Book> getBooks(){
-        return books;
-    }
 
-    // Constructor to initialize the book list.
+    // Constructor
     public Library() {
         this.books = new ArrayList<>();
+
+        //Adding example books
+        books.add(new Book(123, "Harry Potter", "J.K.Rowling"));
+        books.add(new Book(456, "To Kill A Mockingbird", "Harper Lee"));
+        books.add(new Book(789, "1985", "George Orwell"));
+    }
+
+    //Method to retrieve all books
+    public List<Book> getAllBooks() {
+        return books;
     }
 
     //Method to add a new book to the library
@@ -89,8 +99,7 @@ class Library {
         //Check if book with "unique" id already exists to avoid duplicates
         if (books.stream().anyMatch(book -> book.getId() == id)) {
             System.out.println("Book with ID " + id + " already exists.");
-        }else {
-//If the book id is unique, create a new Book object and add it to library collection
+        } else {
             Book newBook = new Book(id, title, author);
             books.add(newBook);
         }
@@ -100,23 +109,41 @@ class Library {
     public void removeBookByTitle(String title) {
         books.removeIf(book -> book.getTitle().equals(title));
     }
+
     //Method to display a list of all the books in the library
-    public void listAllBooks() {
+    public String listAllBooks() {
+        StringBuilder result = new StringBuilder();
         for (Book book : books) {
-            System.out.println(book);
+            result.append(book.toString()).append("\n");
         }
+        //Include current books in the collection
+        result.append("\nCurrent Library:\n");
+        for (Book book : books) {
+            result.append(book.toString()).append("\n");
+        }
+        return result.toString();
     }
 
-    //Method to load books from a file into the library system.
-public void removeBookByBarcode(int barcode) {
-        books.removeIf(book -> book.getId() == barcode);
-}
+    //Method to remove books
+    public boolean removeBookByBarcode(int barcode) {
+        for (Iterator<Book> iterator = books.iterator(); iterator.hasNext(); ) {
+            Book book = iterator.next();
+            if (book.getId() == barcode) {
+                iterator.remove();
+                return true; // Book was found and removed
+            }
+        }
+        return false; // Book was not found
+    }
+
+    //Method to check out a book by title
     public void checkOutBookByTitle(String title) {
         for (Book book : books) {
             if (book.getTitle().equals(title) && !book.isCheckedOut()) {
                 book.checkOut();
                 System.out.println("Book checked out successfully.");
                 return;
+
             }
 
         }
@@ -125,6 +152,7 @@ public void removeBookByBarcode(int barcode) {
 
     }
 
+    //Method to check in a book by title
     public void checkInBookByTitle(String title) {
         for (Book book : books) {
             if (book.getTitle().equals(title) && book.isCheckedOut()) {
@@ -149,11 +177,13 @@ public void removeBookByBarcode(int barcode) {
                 String author = parts[2];
                 addBook(id, title, author);
             }
+            JOptionPane.showMessageDialog(null, "File successfully entered.", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "File not found: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
     }
+
     //Method to save the current list of books to a file
     public void saveBooksToFile(String fileName) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
@@ -161,16 +191,22 @@ public void removeBookByBarcode(int barcode) {
                 writer.println(book);
             }
         } catch (IOException e) {
-            System.out.println("Error writing to file: " + e.getMessage());
+            System.out.println("Error, unable to write to file: " + e.getMessage());
         }
     }
+
+    //Method to get list of books
+    public List<Book> getBooks() {
+        return books;
+    }
+
 }
 
 /*
 Elizabeth Cordero
 Software Development I
 202420-CEN3024C-CRN24667
-03/03/2024
+03/24/2024
 */
 public class LibraryManagementSystem {
     public static void main(String[] args) {
@@ -179,7 +215,7 @@ public class LibraryManagementSystem {
         Scanner scanner = new Scanner(System.in);
         library.loadBooksFromFile("books.txt");
 
-        //Example: Add, remove and list books.
+        //Example Books: Add, remove and list books.
         library.addBook(4, "To Kill a Mockingbird", "Harper Lee");
         library.addBook(123, "1984", "George Orwell");
         library.addBook(321, "Harry Potter", "J.K. Rowling");
@@ -188,6 +224,11 @@ public class LibraryManagementSystem {
 
         //Save changes
         library.saveBooksToFile("books.txt");
+
+        SwingUtilities.invokeLater(() -> {
+            LibraryManagementSystemGUI gui = new LibraryManagementSystemGUI(library, scanner);
+        });
+
         //Example: Add, remove and list books.
         while (true) {
             System.out.println("\nLibrary Management System");
