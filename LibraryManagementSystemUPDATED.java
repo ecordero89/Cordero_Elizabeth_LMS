@@ -4,17 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Iterator;
-import javax.swing.SwingUtilities;
 import javax.swing.JOptionPane;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.*;
+import javax.swing.SwingUtilities;
+
 
 /*
 Elizabeth Cordero
 Software Development I
 202420-CEN3024C-CRN24667
-03/24/2024
+04/07/2024
 */
 
-//This class represents a Book with id, title, author and checkout status
+
+//This class represents a Book with id, title, author, and checkout status
 class Book {
     private int id;
     private String title;
@@ -34,7 +40,7 @@ class Book {
     public LocalDate getDueDate() {
         return dueDate;
     }
-    //Getter methods to get the book properties
+    //Getter method to retrieve the book properties
     public int getId() {
         return id;
     }
@@ -49,14 +55,14 @@ class Book {
         return checkedOut;
     }
 
-    //Method to check out
     public void checkOut(){
+
         checkedOut = true;
         dueDate =LocalDate.now().plusDays(30); //Selected random due date
     }
 
-    //Method to check in
     public void checkIn() {
+
         checkedOut = false;
         dueDate = null;
     }
@@ -72,24 +78,20 @@ class Book {
 Elizabeth Cordero
 Software Development I
 202420-CEN3024C-CRN24667
-03/24/2024
+04/07/2024
 */
+
 
 //Library class to manage a book collection.
 class Library {
     private List<Book> books;
 
-    // Constructor
+    // Constructor to initialize the book list.
     public Library() {
         this.books = new ArrayList<>();
 
-        //Adding example books
-        books.add(new Book(123, "Harry Potter", "J.K.Rowling"));
-        books.add(new Book(456, "To Kill A Mockingbird", "Harper Lee"));
-        books.add(new Book(789, "1985", "George Orwell"));
     }
 
-    //Method to retrieve all books
     public List<Book> getAllBooks() {
         return books;
     }
@@ -100,6 +102,7 @@ class Library {
         if (books.stream().anyMatch(book -> book.getId() == id)) {
             System.out.println("Book with ID " + id + " already exists.");
         } else {
+//If the book id is unique, create a new Book object and add it to library collection
             Book newBook = new Book(id, title, author);
             books.add(newBook);
         }
@@ -130,13 +133,13 @@ class Library {
             Book book = iterator.next();
             if (book.getId() == barcode) {
                 iterator.remove();
-                return true; // Book was found and removed
+                return true; // Book found and removed
             }
         }
-        return false; // Book was not found
+        return false; // Book not found
     }
 
-    //Method to check out a book by title
+
     public void checkOutBookByTitle(String title) {
         for (Book book : books) {
             if (book.getTitle().equals(title) && !book.isCheckedOut()) {
@@ -152,7 +155,6 @@ class Library {
 
     }
 
-    //Method to check in a book by title
     public void checkInBookByTitle(String title) {
         for (Book book : books) {
             if (book.getTitle().equals(title) && book.isCheckedOut()) {
@@ -184,6 +186,7 @@ class Library {
 
     }
 
+    //If the fileName is the barcode
     //Method to save the current list of books to a file
     public void saveBooksToFile(String fileName) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
@@ -206,32 +209,55 @@ class Library {
 Elizabeth Cordero
 Software Development I
 202420-CEN3024C-CRN24667
-03/24/2024
+04/07/2024
 */
 public class LibraryManagementSystem {
+
+    public void connectToDatabase() {
+        try {
+            // Load the SQLite JDBC driver
+            Class.forName("org.sqlite.JDBC");
+
+            // Establish the connection
+            String url = "jdbc:sqlite:C:/Users/AnEmb/IdeaProjects/LibraryManagementSystem/out/Library_Management_System.db";
+            Connection connection = DriverManager.getConnection(url);
+
+            // Do something with the connection (e.g., create tables, execute queries)
+            // For example:
+            Statement statement = connection.createStatement();
+            statement.execute("CREATE TABLE IF NOT EXISTS books (id INTEGER PRIMARY KEY, title TEXT, author TEXT, checked_out BOOLEAN, due_date TEXT)");
+
+            // Close the connection when done
+            connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            // Handle any exceptions here
+        }
+    }
+
     public static void main(String[] args) {
-        //Instantiate the Library class and load books from a file
+        // Instantiate the Library class and load books from a file
         Library library = new Library();
         Scanner scanner = new Scanner(System.in);
         library.loadBooksFromFile("books.txt");
 
-        //Example Books: Add, remove and list books.
-        library.addBook(4, "To Kill a Mockingbird", "Harper Lee");
-        library.addBook(123, "1984", "George Orwell");
-        library.addBook(321, "Harry Potter", "J.K. Rowling");
-        library.removeBookByTitle("To Kill a Mockingbird");
+        // Establish database connection
+        LibraryManagementSystem librarySystem = new LibraryManagementSystem();
+        librarySystem.connectToDatabase();
+
+        // Example: Add, remove, and list books.
         library.listAllBooks();
 
-        //Save changes
+        // Save changes
         library.saveBooksToFile("books.txt");
 
         SwingUtilities.invokeLater(() -> {
             LibraryManagementSystemGUI gui = new LibraryManagementSystemGUI(library, scanner);
         });
 
-        //Example: Add, remove and list books.
-        while (true) {
-            System.out.println("\nLibrary Management System");
+
+        // Example: Add, remove, and list books.
+        while (true) {System.out.println("\nLibrary Management System");
             System.out.println("1. Add a book");
             System.out.println("2. Remove a book by title");
             System.out.println("3. List all books");
@@ -246,11 +272,11 @@ public class LibraryManagementSystem {
 
             switch (choice) {
                 case 1:
-                   System.out.print("Enter file name: ");
-                   String fileName = scanner.nextLine();
-                   library.loadBooksFromFile(fileName);
-                   System.out.println("Books added from file.");
-                   break;
+                    System.out.print("Enter file name: ");
+                    String fileName = scanner.nextLine();
+                    library.loadBooksFromFile(fileName);
+                    System.out.println("Books added from file.");
+                    break;
                 case 2:
                     System.out.print("Enter title to remove: ");
                     String titleToRemove = scanner.nextLine();
