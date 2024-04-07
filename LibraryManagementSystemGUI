@@ -1,15 +1,19 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Scanner;
 import javax.swing.SwingUtilities;
+import java.sql.*;
+
 
 /*
 Elizabeth Cordero
 Software Development I
 202420-CEN3024C-CRN24667
-03/24/2024
+04/07/2024
 */
 
 //GUI class for the LMS
@@ -26,13 +30,14 @@ public class LibraryManagementSystemGUI extends JFrame {
     private JLabel fileNameLabel;
     private JPanel bannerLabel;
     private JTextField fileNameTextField;
+    private JTextArea bookTextArea;
 
 
     /*
 Elizabeth Cordero
 Software Development I
 202420-CEN3024C-CRN24667
-03/24/2024
+04/07/2024
 */
     public LibraryManagementSystemGUI(Library library, Scanner scanner){
         this.libraryObj = library;
@@ -179,11 +184,4 @@ Software Development I
         setVisible(true);
     }
 
-    //Main method
-    public static void main(String[] args) {
-        Library library = new Library();
-        Scanner scanner = new Scanner(System.in);
-        LibraryManagementSystemGUI gui = new
-                LibraryManagementSystemGUI(library, scanner);
-    }
 }
